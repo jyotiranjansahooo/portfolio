@@ -12,6 +12,14 @@ const Header = () => {
 
   const form = useRef();
 
+  // ----- TOAST STATE & HELPER -----
+  const [toast, setToast] = useState(null);
+  const showToast = (type, message, ttl = 3500) => {
+    setToast({ type, message });
+    window.setTimeout(() => setToast(null), ttl);
+  };
+  // --------------------------------
+
   const sendEmail = (e) => {
     e.preventDefault();
 
@@ -22,13 +30,15 @@ const Header = () => {
       .then(
         () => {
           console.log("SUCCESS!");
-          alert("Message sent successfully!");
+          // use toast instead of alert
+          showToast("success", "Message sent successfully!");
           e.target.reset();
           closecontact();
         },
         (error) => {
           console.log("FAILED...", error.text);
-          alert("Failed to send message. Try again!");
+          // use toast instead of alert
+          showToast("error", "Failed to send message. Try again!");
         }
       );
   };
@@ -441,10 +451,48 @@ const Header = () => {
         </AnimatePresence>
       </header>
 
+      {/* Progress bar */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-600 to-violet-600 origin-[0%] z-50"
         style={{ scaleX }}
       />
+
+      {/* ----- TOAST UI ----- */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.25 }}
+            className="fixed right-6 top-16 z-[9999] w-auto max-w-xs"
+            aria-live="polite"
+          >
+            <div
+              className={`flex items-start gap-3 px-4 py-3 rounded-lg shadow-lg border ${
+                toast.type === "success"
+                  ? "bg-emerald-600/95 border-emerald-700 text-white"
+                  : "bg-red-600/95 border-red-700 text-white"
+              }`}
+            >
+              <div className="flex-1">
+                <p className="text-sm font-semibold">
+                  {toast.type === "success" ? "Success" : "Error"}
+                </p>
+                <p className="text-xs mt-1 opacity-90">{toast.message}</p>
+              </div>
+              <button
+                onClick={() => setToast(null)}
+                className="text-white/90 ml-2 p-1 rounded hover:bg-white/10"
+                aria-label="Close toast"
+              >
+                ✕
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <style>{`
         @keyframes shine {
           from {

@@ -1,27 +1,31 @@
 import { useRef, useEffect } from "react";
-import gsap from "gsap";
-import ScrollTrigger from "gsap/dist/ScrollTrigger";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SlShareAlt } from "react-icons/sl";
 
-const Projec = () => {
+// Import images
+import bookImg from "../assets/image/book.jpg";
+import imagifyImg from "../assets/image/imagify.jpg";
+
+const Projects = () => {
   const secR = useRef(null);
   const titleR = useRef(null);
   const titleLineR = useRef(null);
   const triR = useRef(null);
-  const hzR = useRef(null);
-  const main = useRef();
+  const main = useRef(null);
 
   const projectimg = [
-    { id: 1, title: "Book store", imgsrc: "../../public/img/book.jpg", link: "#" },
-    { id: 2, title: "imagGify", imgsrc: "../../public/img/imagify.jpg", link: "#" },
-    { id: 3, title: "upcoming", imgsrc: "", link: "#" },
+    { id: 1, title: "Book store", imgsrc: bookImg, link: "#" },
+    { id: 2, title: "Imagify", imgsrc: imagifyImg, link: "#" },
+    { id: 3, title: "Upcoming", imgsrc: "", link: "#" }, 
   ];
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      /** ✅ Title Animation */
       gsap.fromTo(
         titleR.current,
         { y: 100, opacity: 0 },
@@ -56,7 +60,7 @@ const Projec = () => {
         }
       );
 
-      /** ✅ Horizontal Scroll with smaller gap */
+      /** ✅ Horizontal Scroll */
       const panels = gsap.utils.toArray(".panel");
       const scrollTween = gsap.to(panels, {
         xPercent: -100 * (panels.length - 1),
@@ -75,7 +79,7 @@ const Projec = () => {
         },
       });
 
-      /** ✅ Panel Image and Title Animations */
+      /** ✅ Animate images and titles */
       panels.forEach((panel) => {
         const image = panel.querySelector(".project-image");
         const title = panel.querySelector(".project-title");
@@ -118,7 +122,7 @@ const Projec = () => {
     }, main);
 
     return () => ctx.revert();
-  }, [projectimg.length]);
+  }, []);
 
   return (
     <main ref={main}>
@@ -127,7 +131,6 @@ const Projec = () => {
         ref={secR}
         id="hz"
       >
-        
         {/* Title Section */}
         <div className="container mx-auto px-4 mb-16 relative z-10">
           <h2
@@ -139,12 +142,11 @@ const Projec = () => {
           <div ref={titleLineR} className="h-1 bg-black mx-auto opacity-0"></div>
         </div>
 
-        {/* Horizontal Scroll */}
+        {/* Horizontal Scroll Section */}
         <div ref={triR} className="h-screen w-full">
           <div
-            ref={hzR}
-            className="horizontal-section flex h-full gap-8" // ✅ small gap added
-            style={{ width: `${projectimg.length * 98}%` }} // ✅ slightly reduced total width
+            className="horizontal-section flex h-full gap-8"
+            style={{ width: `${projectimg.length * 100}%` }}
           >
             {projectimg.map((proj) => (
               <div
@@ -152,7 +154,7 @@ const Projec = () => {
                 key={proj.id}
               >
                 <div className="relative w-[85%] md:w-[65%] lg:w-[45%] flex flex-col items-center justify-center p-4 sm:p-6 bg-black/20 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden">
-                  {/* ✅ Shine Effect */}
+                  {/* Image + Shine */}
                   <div className="relative w-full rounded-2xl overflow-hidden group">
                     <img
                       className="project-image w-full h-auto rounded-2xl object-cover transition-transform duration-500 group-hover:scale-105"
@@ -160,9 +162,9 @@ const Projec = () => {
                       alt={proj.title}
                       loading="lazy"
                     />
-                    {/* Shine overlay */}
                     <div className="shine absolute top-0 left-[-75%] w-[50%] h-full bg-gradient-to-r from-transparent via-white/50 to-transparent transform rotate-12"></div>
                   </div>
+
                   <a
                     href={proj.link}
                     target="_blank"
@@ -177,10 +179,9 @@ const Projec = () => {
             ))}
           </div>
         </div>
-
       </section>
     </main>
   );
 };
 
-export default Projec;
+export default Projects;
